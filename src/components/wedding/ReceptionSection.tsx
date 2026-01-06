@@ -28,14 +28,14 @@ export const ReceptionSection = () => {
           className="font-heading text-4xl md:text-5xl mb-4"
           style={{ color: theme.colors.primary, fontFamily: theme.fonts.heading }}
         >
-          {t('reception', 'The Reception')}
+          {t('sections.reception', 'The Reception')}
         </h2>
         
         <p 
           className="font-accent text-2xl mb-8"
           style={{ color: theme.colors.secondary, fontFamily: theme.fonts.accent }}
         >
-          {t('reception_subtitle', 'Let the celebration begin!')}
+          {t('sections.reception_subtitle', 'Let the celebration begin!')}
         </p>
         
         <div 

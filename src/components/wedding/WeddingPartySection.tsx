@@ -14,12 +14,12 @@ export const WeddingPartySection = () => {
 
   const getRoleLabel = (role: string) => {
     const labels: Record<string, string> = {
-      kavor: t('kavor', 'Kavor (Godfather)'),
-      kavort: t('kavort', 'Kavort (Godmother)'),
-      bestman: t('bestman', 'Best Man'),
-      bridesmaid: t('bridesmaid', 'Bridesmaid'),
-      groomsman: t('groomsman', 'Groomsman'),
-      other: t('party_member', 'Party Member')
+      kavor: t('roles.kavor', 'Kavor (Godfather)'),
+      kavort: t('roles.kavort', 'Kavort (Godmother)'),
+      bestman: t('roles.bestman', 'Best Man'),
+      bridesmaid: t('roles.bridesmaid', 'Bridesmaid'),
+      groomsman: t('roles.groomsman', 'Groomsman'),
+      other: t('roles.other', 'Party Member')
     };
     return labels[role] || role;
   };
@@ -40,14 +40,14 @@ export const WeddingPartySection = () => {
           className="font-heading text-4xl md:text-5xl mb-4"
           style={{ color: theme.colors.primary, fontFamily: theme.fonts.heading }}
         >
-          {t('wedding_party', 'Wedding Party')}
+          {t('sections.wedding_party', 'Wedding Party')}
         </h2>
         
         <p 
           className="font-accent text-2xl mb-12"
           style={{ color: theme.colors.secondary, fontFamily: theme.fonts.accent }}
         >
-          {t('wedding_party_subtitle', 'Our loved ones')}
+          {t('sections.wedding_party_subtitle', 'Our loved ones')}
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
