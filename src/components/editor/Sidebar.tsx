@@ -1,6 +1,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/Tabs';
 import { ThemeSelector } from './ThemeSelector';
-import { Palette, PenTool, Globe, Type, Image, Music, MapPin, Gift, Heart, Layout, Home } from 'lucide-react';
+import { Palette, PenTool, Globe, Type, Image, Music, MapPin, Gift, Heart, Layout, Home, Clock } from 'lucide-react';
+import { AiLogoGenerator } from '../tools/AiLogoGenerator';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from '../../store/themeStore';
 import { useContentStore } from '../../store/contentStore';
@@ -24,7 +25,11 @@ export const Sidebar = () => {
     removeRegistryItem,
     updateRegistryItem,
     updateAudio,
-    toggleSection
+    toggleSection,
+    addScheduleItem,
+    removeScheduleItem,
+    updateScheduleItem,
+    updateSectionLayout
   } = useContentStore();
 
   const changeLanguage = (lng: string) => {
@@ -49,11 +54,11 @@ export const Sidebar = () => {
         <TabsList>
           <TabsTrigger value="content">
             <PenTool className="w-4 h-4 mr-2" />
-            {t('content', 'Content')}
+            {t('nav.content', 'Content')}
           </TabsTrigger>
           <TabsTrigger value="design">
             <Palette className="w-4 h-4 mr-2" />
-            {t('design', 'Design')}
+            {t('nav.design', 'Design')}
           </TabsTrigger>
         </TabsList>
         
@@ -151,6 +156,48 @@ export const Sidebar = () => {
                         />
                     </div>
                 </AccordionContent>
+             </AccordionItem>
+
+             {/* 3.5. Schedule */}
+             <AccordionItem value="schedule" className="border rounded-md px-3 border-gray-200">
+                 <AccordionTrigger className="hover:no-underline py-3">
+                    <div className="flex items-center justify-between w-full pr-2">
+                        <div className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                            <Clock className="w-4 h-4 text-pink-500" />
+                            {t('sections.schedule', 'Day Schedule')}
+                        </div>
+                        <div onClick={(e) => { e.stopPropagation(); toggleSection('schedule'); }} className={`w-8 h-4 rounded-full relative transition-colors ${content.sectionVisibility.schedule ? 'bg-green-500' : 'bg-gray-300'}`}>
+                            <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all ${content.sectionVisibility.schedule ? 'left-4.5' : 'left-0.5'}`} />
+                        </div>
+                    </div>
+                 </AccordionTrigger>
+                 <AccordionContent className="space-y-4">
+                     <button onClick={addScheduleItem} className="w-full py-2 text-xs border border-dashed border-gray-300 rounded hover:border-blue-500 hover:text-blue-500 transition-colors">
+                         + {t('actions.add_event', 'Add Event')}
+                     </button>
+                     {content.schedule.map((event) => (
+                         <div key={event.id} className="bg-gray-50 p-3 rounded-md border text-xs space-y-2 relative group">
+                             <button onClick={() => removeScheduleItem(event.id)} className="absolute top-2 right-2 text-gray-400 hover:text-red-500">&times;</button>
+                             <div className="flex gap-2">
+                                <input type="text" value={event.time} onChange={(e) => updateScheduleItem(event.id, { time: e.target.value })} className="w-20 border-gray-300 rounded p-1 font-bold mb-1 text-center" placeholder="Time" />
+                                <AiLogoGenerator onSelect={(url) => updateScheduleItem(event.id, { customLogo: url })} />
+                             </div>
+                             <input type="text" value={event.title} onChange={(e) => updateScheduleItem(event.id, { title: e.target.value })} className="w-full border-gray-300 rounded p-1 font-bold" placeholder="Event Title" />
+                             <input type="text" value={event.location} onChange={(e) => updateScheduleItem(event.id, { location: e.target.value })} className="w-full border-gray-300 rounded p-1" placeholder="Location" />
+                             <select 
+                                value={event.type} 
+                                onChange={(e) => updateScheduleItem(event.id, { type: e.target.value as 'church' | 'reception' | 'party' | 'other' })}
+                                className="w-full border-gray-300 rounded p-1 bg-white"
+                             >
+                                <option value="church">Church</option>
+                                <option value="reception">Reception</option>
+                                <option value="party">Party</option>
+                                <option value="other">Other</option>
+                             </select>
+                             <textarea value={event.description} onChange={(e) => updateScheduleItem(event.id, { description: e.target.value })} className="w-full border-gray-300 rounded p-1" rows={2} placeholder="Description" />
+                         </div>
+                     ))}
+                 </AccordionContent>
              </AccordionItem>
 
              {/* 4. Timeline / Story */}
@@ -311,6 +358,44 @@ export const Sidebar = () => {
                          <option value="'Great Vibes', cursive">Great Vibes</option>
                          <option value="'Inter', sans-serif">Inter</option>
                      </select>
+                </div>
+
+                {/* Section Layouts */}
+                <div className="space-y-4 pt-4 border-t border-gray-100">
+                    <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                        <Layout className="w-4 h-4 text-gray-500" />
+                        Section Layouts
+                    </h3>
+                    
+                    <div className="space-y-2">
+                        <label className="text-xs font-medium text-gray-600">Hero Style</label>
+                        <div className="grid grid-cols-3 gap-2">
+                            {['centered', 'cover', 'split'].map((mode) => (
+                                <button
+                                    key={mode}
+                                    onClick={() => updateSectionLayout('hero', mode)}
+                                    className={`px-2 py-1 text-xs border rounded capitalize ${content.sectionLayouts?.hero === mode ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+                                >
+                                    {mode}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-xs font-medium text-gray-600">Timeline Style</label>
+                        <div className="grid grid-cols-3 gap-2">
+                             {['vertical', 'zigzag', 'cards'].map((mode) => (
+                                <button
+                                    key={mode}
+                                    onClick={() => updateSectionLayout('timeline', mode)}
+                                    className={`px-2 py-1 text-xs border rounded capitalize ${content.sectionLayouts?.timeline === mode ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium' : 'text-gray-600 hover:bg-gray-50'}`}
+                                >
+                                    {mode}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </section>
         </TabsContent>

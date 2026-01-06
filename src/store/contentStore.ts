@@ -34,6 +34,16 @@ export interface WeddingPartyMember {
   description?: string;
 }
 
+export interface ScheduleItem {
+  id: string;
+  time: string;
+  title: string;
+  location: string;
+  type: 'church' | 'reception' | 'party' | 'other';
+  description?: string;
+  customLogo?: string;
+}
+
 export interface SiteContent {
   names: string;
   date: string;
@@ -58,9 +68,15 @@ export interface SiteContent {
     notes: string;
   };
   weddingParty: WeddingPartyMember[];
+  schedule: ScheduleItem[];
   story: TimelineEvent[];
   travel: TravelItem[];
   registry: RegistryItem[];
+  sectionLayouts: {
+    hero: 'centered' | 'cover' | 'split';
+    timeline: 'vertical' | 'zigzag' | 'cards';
+    weddingParty: 'grid' | 'carousel';
+  };
   registryUrl: string;
   rsvpDeadline: string;
   audio: {
@@ -74,6 +90,7 @@ export interface SiteContent {
     reception: boolean;
     weddingParty: boolean;
     story: boolean;
+    schedule: boolean;
     travel: boolean;
     registry: boolean;
     rsvp: boolean;
@@ -100,6 +117,10 @@ interface ContentState {
   updateRegistryItem: (id: string, updates: Partial<RegistryItem>) => void;
   updateAudio: (updates: Partial<SiteContent['audio']>) => void;
   toggleSection: (section: keyof SiteContent['sectionVisibility']) => void;
+  addScheduleItem: () => void;
+  removeScheduleItem: (id: string) => void;
+  updateScheduleItem: (id: string, updates: Partial<ScheduleItem>) => void;
+  updateSectionLayout: (section: keyof SiteContent['sectionLayouts'], layout: string) => void;
 }
 
 const DEFAULT_CONTENT: SiteContent = {
@@ -128,6 +149,10 @@ const DEFAULT_CONTENT: SiteContent = {
   weddingParty: [
     { id: "k1", name: "Armen Petrosyan", role: "kavor", description: "Our beloved Kavor" }
   ],
+  schedule: [
+    { id: "s1", time: "14:00", title: "Crowning Ceremony", location: "St. Gayane Church", type: "church", description: "The holy sacrament of marriage." },
+    { id: "s2", time: "18:00", title: "Reception", location: "Dvin Hall", type: "reception", description: "Dinner, dancing, and celebration." }
+  ],
   story: [
     { id: "1", year: "2020", title: "First Meeting", description: "We met at a friend's wedding.", image: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop" },
     { id: "2", year: "2023", title: "Khosk-Arnel", description: "David's family came to ask for Anna's hand.", image: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop" },
@@ -142,7 +167,8 @@ const DEFAULT_CONTENT: SiteContent = {
   registryUrl: "",
   rsvpDeadline: "September 1, 2026",
   audio: { trackUrl: "", isPlaying: false, volume: 0.5 },
-  sectionVisibility: { hero: true, ceremony: true, reception: true, weddingParty: true, story: true, travel: true, registry: true, rsvp: true }
+  sectionVisibility: { hero: true, ceremony: true, reception: true, weddingParty: true, story: true, schedule: true, travel: true, registry: true, rsvp: true },
+  sectionLayouts: { hero: 'centered', timeline: 'vertical', weddingParty: 'grid' }
 };
 
 export const useContentStore = create<ContentState>((set) => ({
@@ -182,5 +208,15 @@ export const useContentStore = create<ContentState>((set) => ({
   updateAudio: (updates) => set((state) => ({ content: { ...state.content, audio: { ...state.content.audio, ...updates } } })),
   toggleSection: (section) => set((state) => ({
     content: { ...state.content, sectionVisibility: { ...state.content.sectionVisibility, [section]: !state.content.sectionVisibility[section] } }
+  })),
+  addScheduleItem: () => set((state) => ({
+    content: { ...state.content, schedule: [...state.content.schedule, { id: Math.random().toString(36).substr(2, 9), time: "12:00", title: "New Event", location: "", type: "other" }] }
+  })),
+  removeScheduleItem: (id) => set((state) => ({ content: { ...state.content, schedule: state.content.schedule.filter(s => s.id !== id) } })),
+  updateScheduleItem: (id, updates) => set((state) => ({
+    content: { ...state.content, schedule: state.content.schedule.map(s => s.id === id ? { ...s, ...updates } : s) }
+  })),
+  updateSectionLayout: (section, layout) => set((state) => ({
+    content: { ...state.content, sectionLayouts: { ...state.content.sectionLayouts, [section]: layout } }
   }))
 }));
