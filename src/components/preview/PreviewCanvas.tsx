@@ -4,11 +4,13 @@ import { HeroSection } from '../wedding/HeroSection';
 import { CeremonySection } from '../wedding/CeremonySection';
 import { ReceptionSection } from '../wedding/ReceptionSection';
 import { WeddingPartySection } from '../wedding/WeddingPartySection';
+import { ScheduleSection } from '../wedding/ScheduleSection';
 import { TimelineSection } from '../wedding/TimelineSection';
 import { TravelSection } from '../wedding/TravelSection';
 import { RegistrySection } from '../wedding/RegistrySection';
 import { RsvpSection } from '../wedding/RsvpSection';
 import { FooterSection } from '../wedding/FooterSection';
+import { ThemeEffects } from '../effects/ThemeEffects';
 import { cn } from '../../lib/utils';
 
 export const PreviewCanvas = () => {
@@ -26,9 +28,11 @@ export const PreviewCanvas = () => {
         >
         {/* Website Content - Scrollable Area */}
         <div className="flex-1 overflow-y-auto w-full custom-scrollbar relative">
+             <ThemeEffects />
              <HeroSection />
              <CeremonySection />
              <WeddingPartySection />
+             <ScheduleSection />
              <TimelineSection />
              <ReceptionSection />
              <TravelSection />

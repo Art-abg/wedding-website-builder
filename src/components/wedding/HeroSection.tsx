@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useThemeStore } from '../../store/themeStore';
 import { Calendar, MapPin } from 'lucide-react';
@@ -18,7 +18,8 @@ export const HeroSection = () => {
   // OR just use content.hero.layoutMode as the single source of truth? 
   // Valid strategy: Initialize store with theme default, then let user override.
   // For now, let's trust content.hero.layoutMode as the primary driver.
-  const layout = layoutMode; 
+  // Use layout from sectionLayouts, fallback to hero.layoutMode for legacy/default
+  const layout = content.sectionLayouts?.hero || layoutMode; 
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -30,6 +31,9 @@ export const HeroSection = () => {
     visible: { y: 0, opacity: 1, transition: { delay: 0.3, duration: 0.8 } }
   };
 
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
+
   if (layout === 'cover') {
     return (
       <motion.section 
@@ -39,8 +43,13 @@ export const HeroSection = () => {
         viewport={{ once: true }}
         variants={containerVariants}
       >
-        <div className="absolute inset-0 z-0">
-          <img src={backgroundImage} alt="Wedding Couple" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <motion.img 
+            style={{ y }}
+            src={backgroundImage} 
+            alt="Wedding Couple" 
+            className="w-full h-[120%] object-cover -mt-[10%]" 
+          />
           <div className="absolute inset-0 bg-black/40" /> {/* Overlay */}
         </div>
         
@@ -97,7 +106,7 @@ export const HeroSection = () => {
                     whileHover={{ scale: 1.05 }}
                     className="mt-4 px-10 py-4 border-2 border-primary text-primary hover:bg-primary hover:text-white transition-colors duration-300 rounded-button"
                  >
-                    {t('rsvp')}
+                    {t('sections.rsvp', 'RSVP')}
                  </motion.button>
             </motion.div>
         </div>
@@ -131,7 +140,7 @@ export const HeroSection = () => {
                     whileHover={{ scale: 1.05 }}
                     className="px-8 py-3 bg-primary text-white text-lg rounded-button shadow-md"
                  >
-                    {t('rsvp')}
+                    {t('sections.rsvp', 'RSVP')}
                  </motion.button>
             </div>
         </motion.div>

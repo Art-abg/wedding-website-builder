@@ -9,7 +9,8 @@ export const TimelineSection = () => {
     const { getEffectiveTheme } = useThemeStore();
     const { t } = useTranslation();
     const theme = getEffectiveTheme();
-    const layout = theme.layout.timeline;
+    // Default to 'vertical' if undefined, or use theme default if we wanted to be fancy, but store is source of truth now
+    const layout = content.sectionLayouts?.timeline || 'vertical';
     
     // Spacing configuration map
     const spacingMap = {
@@ -29,7 +30,7 @@ export const TimelineSection = () => {
                     className="text-center mb-16 space-y-4"
                 >
                     <h2 className="font-heading text-4xl md:text-5xl text-primary">
-                        {t('our_story')}
+                        {t('sections.our_story')}
                     </h2>
                     <div className="w-24 h-1 bg-secondary mx-auto rounded-full" />
                 </motion.div>
